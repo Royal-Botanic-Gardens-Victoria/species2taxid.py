@@ -3,8 +3,8 @@
 #change above if your python 3 environment has a different name
 
 #usage:
-#species2taxid.py list-of-species.txt outputfile.txt localdbfile.txt "Viridiplantae"
-#if not using local file leave blank ""
+#species2taxid.py list-of-species.txt outputfile.txt localdbfile.txt
+#if not using local file leave blank
 
 
 import sys
@@ -26,6 +26,15 @@ def get_taxid(species,extraterm):
 	the tax id"""
 	species=species.replace("_"," ") #if underscore left in, replace
 	
+	if " x " in species:
+		species=species.replace(" x "," ")
+	
+	if " X " in species:
+		species=species.replace(" X "," ")
+		
+	if " sp." in species:
+		species=species.replace(" sp.","")
+	
 	if len(species.split(" "))>2:
 		species = species.split(" ")[0]+" "+species.split(" ")[1] #remove extra names
 	
@@ -40,18 +49,11 @@ def get_taxid(species,extraterm):
 			return record['IdList'][0]
 			
 		except:
-			return "failed"
-			'''
-			try: #this led to wrong taxons
-				species = species.split("+")[0] #try just the genus
-				search = Entrez.esearch(term = species, db = "taxonomy", retmode = "xml")
-				record = Entrez.read(search)
-				return record['IdList'][0]
-				
-			except:
-				return "failed"
-			'''
-	if len(species.split(" "))==1:
+			print(f"{species} failed, trying genus {species.split('+')[0]}")
+			species=species.split("+")[0]
+			
+			
+	if len(species.split(" "))==1: #genus only
 		species=species.rstrip("\n")
 		try:
 			search = Entrez.esearch(term = extraterm+"[Orgn] AND "+species, db = "taxonomy", retmode = "xml")
@@ -63,7 +65,6 @@ def get_taxid(species,extraterm):
 		except:
 			return "failed"
 		
-
 def get_tax_data(taxid):
 	"""once we have the taxid, we can fetch the record"""
 	try:
@@ -156,6 +157,7 @@ if __name__ == '__main__':
 			if taxid!="failed":
 				data = get_tax_data(taxid)
 				lineage=""
+				#print(data)
 				#lineage = data[0]['LineageEx']['ScientificName']
 				try:
 					for j in data[0]['LineageEx']:
@@ -173,7 +175,8 @@ if __name__ == '__main__':
 							lineage=lineage+";"+j['ScientificName']
 						if j['Rank']=='genus':
 							lineage=lineage+";"+j['ScientificName']
-					lineage=lineage+";"+species_name
+					lineage=lineage+";"+data[0]['ScientificName'] #add final name, genus, spp etc.
+					
 					g = open(sys.argv[2],'a')
 					g.write(species_name+"\t"+taxid+"\t"+lineage+"\n")
 					g.close()

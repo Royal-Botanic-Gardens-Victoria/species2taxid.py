@@ -6,4 +6,4 @@ species2taxid.py list-of-species.txt outputfile.txt tax2lin.txt "Viridiplantae"
 
 The list of species should be genus and species names separated by a white space.
 tax2lin.txt is a local list of NCBI plant species and their TaxIDs and taxonomy. For other kingdoms, or if you want to only use most recent names, this file can be started from scratch. Building this file will take some time because each entry must be downloaded from NCBI. Retain the file for future use, it is updated with each run with any species not previously searched.
-"Viridiplantae" is an optional extra term to avoid confusion of species names being the same across kingdoms.
+"Viridiplantae" is an optional extra term to avoid confusion of species names being the same across kingdoms. Other search terms can be added here, e.g. "Viridiplantae NOT Chlorophyta".

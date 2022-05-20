@@ -3,16 +3,21 @@
 #change above if your python 3 environment has a different name
 
 #usage:
-#species2taxid.py list-of-species.txt outputfile.txt localdbfile.txt
+#species2taxid.py list-of-species.txt outputfile.txt localdbfile.txt "Viridiplantae"
 #if not using local file leave blank
 
 
 import sys
 from Bio import Entrez
 import re
-Entrez.email = "theodore.allnutt@rbg.vic.gov.au"
+Entrez.email = ""
 
-Entrez.api_key = "8c29872371a4c4de3fdc0c6570e15625ba08"
+Entrez.api_key = ""
+
+if Entrez.email=="" or Entrez.api_key ="":
+	print("You must enter your Entrez email and api key on lines 13 and 15 of the script. See https://ncbiinsights.ncbi.nlm.nih.gov/2017/11/02/new-api-keys-for-the-e-utilities/")
+	print("Exiting")
+	quit()
 
 
 def tokenize(filename):
